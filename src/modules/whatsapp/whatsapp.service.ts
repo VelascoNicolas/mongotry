@@ -75,8 +75,9 @@ export class WhatsAppService implements OnModuleInit {
 
       // --- Setup Listeners ---
       this.client.on('qr', (qr) => {
-        this.logger.log('QR Code received');
+        this.logger.log('QR Code received'); // Check if this log appears
         this.eventEmitter.emit('qrcode.created', qr);
+        this.logger.log('qrcode.created event emitted.'); // Check if this log appears
       });
       this.client.on('ready', () => {
         this.logger.log('WhatsApp Web client is ready!');
