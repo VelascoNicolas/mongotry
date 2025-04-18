@@ -69,6 +69,7 @@ export class WhatsAppService implements OnModuleInit {
           headless: isProduction ? chromium.headless : true,
           args: puppeteerArgs,
           executablePath: executablePath, // Set conditionally
+          protocolTimeout: 120000, // Add this: 120 seconds timeout (adjust as needed)
         },
       });
       this.logger.log('WhatsApp Client configured.');
