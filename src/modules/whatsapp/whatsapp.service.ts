@@ -1,5 +1,7 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
+import { time } from 'console';
+import { TimeoutError } from 'puppeteer';
 import { Client, NoAuth } from 'whatsapp-web.js';
 
 
@@ -10,6 +12,11 @@ export class WhatsAppService implements OnModuleInit {
   constructor(private eventEmitter: EventEmitter2) {
     this.client = new Client({
       authStrategy: new NoAuth(),
+      puppeteer: {
+        headless: true,
+        args: ['--no-sandbox', '--disable-setuid-sandbox'],
+        TimeoutError: 60000, // Set a timeout for the client to wait for the QR code
+      }
     })
   }
 
