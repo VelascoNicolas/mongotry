@@ -1,23 +1,33 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Client, NoAuth } from 'whatsapp-web.js';
-
+import chromium from '@sparticuz/chromium';
 
 @Injectable()
 export class WhatsAppService implements OnModuleInit {
-  private client: Client = new Client({
-    authStrategy: new NoAuth(),
-    puppeteer: {
-      headless: true,
-      args: ['--no-sandbox', '--disable-setuid-sandbox'],
-      protocolTimeout: 600000, // Increase the protocol timeout to 60 seconds
-    },
-  });
+  private client: Client;
 
   constructor(private eventEmitter: EventEmitter2) {
+    
   }
 
-  onModuleInit() {
+  async onModuleInit() {
+
+    this.client = new Client({
+      authStrategy: new NoAuth(),
+      puppeteer: {
+        headless: true,
+        args: [
+          ...chromium.args,
+          '--no-sandbox',
+          '--disable-setuid-sandbox',
+          '--disable-gpu',
+          '--disable-dev-shm-usage',
+        ],
+        executablePath: await chromium.executablePath(), // Chromium for Vercel
+      },
+    });
+
     this.client.on('qr', (qr) => {
       this.eventEmitter.emit('qrcode.created', qr);
     });
@@ -26,7 +36,7 @@ export class WhatsAppService implements OnModuleInit {
       console.log('WhatsApp Web client is ready!');
     });
 
-    this.client.initialize();
+    await this.client.initialize(); // Initialize only once
   }
 
   // Send a WhatsApp message

@@ -34,6 +34,7 @@
     "@nestjs/platform-express": "^11.0.13",
     "@nestjs/swagger": "^11.1.0",
     "@nestjs/typeorm": "^11.0.0",
+    "@sparticuz/chromium": "^133.0.0",
     "@types/redis": "^4.0.10",
     "@vercel/blob": "^0.27.2",
     "api-full-salud": "file:",
