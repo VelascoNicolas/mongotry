@@ -1,27 +1,33 @@
 {
-  "version": 2,
-  "builds": [
-    {
-      "src": "src/main.ts",
-      "use": "@vercel/node",
-      "config": {
-        "maxLambdaSize": "100mb"
-      }
-    }
-  ],
+
+  "version": 2, 
+
+      "builds": [
+  
+        {
+  
+            "src": "src/main.ts",
+  
+            "use": "@vercel/node"
+  
+        }
+  
+    ],
+
   "installCommand": "npm i --save",
+
   "routes": [
-    {
-      "src": "/api/(.*)",
-      "methods": [
-        "GET",
-        "POST",
-        "PUT",
-        "DELETE",
-        "PATCH",
-        "OPTIONS"
-      ],
-      "dest": "src/main.ts"
-    }
+
+      {
+
+          "src": "/api/(.*)",
+
+          "methods": ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+
+          "dest": "src/main.ts"
+
+      }
+
   ]
+
 }
