@@ -1,23 +1,29 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { executablePath } from 'puppeteer';
+import Chromium from '@sparticuz/chromium-min';
 import { Client, NoAuth } from 'whatsapp-web.js';
 
 @Injectable()
 export class WhatsAppService implements OnModuleInit {
-  private client: Client = new Client({
-    authStrategy: new NoAuth(),
-    puppeteer: {
-      headless: true,
-      args: ['--no-sandbox', '--disable-setuid-sandbox'],
-      protocolTimeout: 600000, // Increase the protocol timeout to 60 seconds
-      executablePath: '/vercel/.cache/puppeteer/chrome/linux-135.0.7049.84/chrome-linux64/chrome'
-    },
-  });
+  private executablePath: string;
+  private client: Client;
 
-  constructor(private eventEmitter: EventEmitter2) {}
+  constructor(private eventEmitter: EventEmitter2) {
+  }
 
   async onModuleInit() {
+    this.executablePath = await Chromium.executablePath();
+    this.client = new Client({
+      authStrategy: new NoAuth(),
+      puppeteer: {
+        headless: true,
+        args: ['--no-sandbox', '--disable-setuid-sandbox'],
+        protocolTimeout: 600000, // Increase the protocol timeout to 60 seconds
+        executablePath: this.executablePath,
+      },
+    });
+
+
     this.client.on('qr', (qr) => {
       this.eventEmitter.emit('qrcode.created', qr);
     });
