@@ -4,21 +4,24 @@ import { Client, NoAuth } from 'whatsapp-web.js';
 
 @Injectable()
 export class WhatsAppService implements OnModuleInit {
-  private client: Client;
+  private client: Client = new Client({
+    authStrategy: new NoAuth(),
+    puppeteer: {
+      headless: true,
+      args: ['--no-sandbox', '--disable-setuid-sandbox'],
+      protocolTimeout: 600000, // Increase the protocol timeout to 60 seconds
+    },
+  });
 
-  constructor(private eventEmitter: EventEmitter2) {
-    this.client = new Client({
-      authStrategy: new NoAuth(),
-      puppeteer: {
-        headless: true,
-        args: ['--no-sandbox', '--disable-setuid-sandbox']
-      }
-    });
-  }
+  constructor(private eventEmitter: EventEmitter2) {}
 
   async onModuleInit() {
-    this.client.on('qr', (qr) => this.eventEmitter.emit('qrcode.created', qr));
-    this.client.on('ready', () => console.log('Client ready'));
+    this.client.on('qr', (qr) => {
+      this.eventEmitter.emit('qrcode.created', qr);
+    });
+    this.client.on('ready', async () => {
+      console.log('WhatsApp Web client is ready!');
+    });
 
     await this.client.initialize();
   }
