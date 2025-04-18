@@ -17,7 +17,7 @@ export class WhatsAppService implements OnModuleInit {
       authStrategy: new NoAuth(),
       puppeteer: {
         headless: true,
-        args: ['--no-sandbox', '--disable-setuid-sandbox'],
+        args: Chromium.args,
         protocolTimeout: 600000, // Increase the protocol timeout to 60 seconds
         executablePath: this.executablePath,
       },
