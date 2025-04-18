@@ -1,38 +1,26 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Client, NoAuth } from 'whatsapp-web.js';
-import chromium from '@sparticuz/chromium-min';
 
 @Injectable()
 export class WhatsAppService implements OnModuleInit {
   private client: Client;
 
   constructor(private eventEmitter: EventEmitter2) {
-    
+    this.client = new Client({
+      authStrategy: new NoAuth(),
+      puppeteer: {
+        headless: true,
+        args: ['--no-sandbox', '--disable-setuid-sandbox']
+      }
+    });
   }
 
   async onModuleInit() {
-    try {
-      // Use lighter chromium-min for Vercel
-      chromium.setHeadlessMode = true;
-      const executablePath = await chromium.executablePath();
+    this.client.on('qr', (qr) => this.eventEmitter.emit('qrcode.created', qr));
+    this.client.on('ready', () => console.log('Client ready'));
 
-      this.client = new Client({
-        authStrategy: new NoAuth(),
-        puppeteer: {
-          headless: true,
-          args: [...chromium.args, '--no-sandbox', '--disable-setuid-sandbox'],
-          executablePath,
-        },
-      });
-
-      this.client.on('qr', (qr) => this.eventEmitter.emit('qrcode.created', qr));
-      this.client.on('ready', () => console.log('Client ready'));
-      
-      await this.client.initialize();
-    } catch (error) {
-      console.error('WhatsApp init failed:', error);
-    }
+    await this.client.initialize();
   }
 
   // Send a WhatsApp message
