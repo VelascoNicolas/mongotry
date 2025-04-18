@@ -1,5 +1,6 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
+import { executablePath } from 'puppeteer';
 import { Client, NoAuth } from 'whatsapp-web.js';
 
 @Injectable()
@@ -10,6 +11,7 @@ export class WhatsAppService implements OnModuleInit {
       headless: true,
       args: ['--no-sandbox', '--disable-setuid-sandbox'],
       protocolTimeout: 600000, // Increase the protocol timeout to 60 seconds
+      executablePath: '/vercel/.cache/puppeteer/chrome/linux-135.0.7049.84/chrome-linux64/chrome'
     },
   });
 
