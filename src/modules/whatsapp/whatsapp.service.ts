@@ -1,7 +1,5 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { time } from 'console';
-import { TimeoutError } from 'puppeteer';
 import { Client, NoAuth } from 'whatsapp-web.js';
 
 
@@ -18,6 +16,7 @@ export class WhatsAppService implements OnModuleInit {
         TimeoutError: 60000, // Set a timeout for the client to wait for the QR code
       }
     })
+    this.client.initialize();
   }
 
   onModuleInit() {
@@ -27,10 +26,6 @@ export class WhatsAppService implements OnModuleInit {
 
     this.client.on('ready', () => {
       console.log('WhatsApp Web client is ready!');
-    });
-
-    this.client.on('authenticated', async () => {
-      console.log('WhatsApp Web client authenticated!');
     });
 
     this.client.initialize();
