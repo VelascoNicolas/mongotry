@@ -5,18 +5,16 @@ import { Client, NoAuth } from 'whatsapp-web.js';
 
 @Injectable()
 export class WhatsAppService implements OnModuleInit {
-  private client: Client;
+  private client: Client = new Client({
+    authStrategy: new NoAuth(),
+    puppeteer: {
+      headless: true,
+      args: ['--no-sandbox', '--disable-setuid-sandbox'],
+      protocolTimeout: 600000, // Increase the protocol timeout to 60 seconds
+    },
+  });
 
   constructor(private eventEmitter: EventEmitter2) {
-    this.client = new Client({
-      authStrategy: new NoAuth(),
-      puppeteer: {
-        headless: true,
-        args: ['--no-sandbox', '--disable-setuid-sandbox'],
-        TimeoutError: 60000, // Set a timeout for the client to wait for the QR code
-      }
-    })
-    this.client.initialize();
   }
 
   onModuleInit() {
